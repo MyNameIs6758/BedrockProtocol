@@ -21,12 +21,12 @@ use pmmp\encoding\LE;
 use pmmp\encoding\VarInt;
 use pocketmine\color\Color;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\DebugDrawerPacket;
+use pocketmine\network\mcpe\protocol\PrimitiveShapesPacket;
 use pocketmine\network\mcpe\protocol\PacketDecodeException;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 
 /**
- * @see DebugDrawerPacket
+ * @see PrimitiveShapesPacket
  */
 final class PacketShapeData{
 
