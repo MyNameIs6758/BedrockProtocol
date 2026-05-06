@@ -24,24 +24,30 @@ class UpdateClientOptionsPacket extends DataPacket implements ServerboundPacket{
 	public const NETWORK_ID = ProtocolInfo::UPDATE_CLIENT_OPTIONS_PACKET;
 
 	private ?GraphicsMode $graphicsMode;
+	private ?bool $filterProfanity;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(?GraphicsMode $graphicsMode) : self{
+	public static function create(?GraphicsMode $graphicsMode,?bool $filterProfanity) : self{
 		$result = new self;
 		$result->graphicsMode = $graphicsMode;
+		$result->filterProfanity = $filterProfanity;
 		return $result;
 	}
 
 	public function getGraphicsMode() : ?GraphicsMode{ return $this->graphicsMode; }
 
+	public function getFilterProfanity() : ?bool{ return $this->filterProfanity; }
+
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->graphicsMode = CommonTypes::readOptional($in, fn() => GraphicsMode::fromPacket(Byte::readUnsigned($in)));
+		$this->filterProfanity = CommonTypes::readOptional($in, CommonTypes::getBool(...));
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::writeOptional($out, $this->graphicsMode, fn(ByteBufferWriter $out, GraphicsMode $v) => Byte::writeUnsigned($out, $v->value));
+		CommonTypes::writeOptional($out, $this->filterProfanity, CommonTypes::putBool(...));
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

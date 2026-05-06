@@ -22,24 +22,30 @@ class PartyChangedPacket extends DataPacket implements ServerboundPacket{
 	public const NETWORK_ID = ProtocolInfo::PARTY_CHANGED_PACKET;
 
 	private string $partyId;
+	private bool $isPartyLeader;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(string $partyId) : self{
+	public static function create(string $partyId, bool $isPartyLeader) : self{
 		$result = new self;
 		$result->partyId = $partyId;
+		$result->isPartyLeader = $isPartyLeader;
 		return $result;
 	}
 
 	public function getPartyId() : string{ return $this->partyId; }
 
+	public function isPartyLeader() : bool{ return $this->isPartyLeader; }
+
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->partyId = CommonTypes::getString($in);
+		$this->isPartyLeader = CommonTypes::getBool($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::putString($out, $this->partyId);
+		CommonTypes::putBool($out, $this->isPartyLeader);
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

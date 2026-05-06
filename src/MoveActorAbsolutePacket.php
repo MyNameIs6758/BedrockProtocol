@@ -27,6 +27,8 @@ class MoveActorAbsolutePacket extends DataPacket implements ClientboundPacket, S
 	public const FLAG_TELEPORT = 0x02;
 	public const FLAG_FORCE_MOVE_LOCAL_ENTITY = 0x04;
 
+	public const FLAG_FORCE_COMPLETE = 0x08;
+
 	public int $actorRuntimeId;
 	public Vector3 $position;
 	public float $pitch;
