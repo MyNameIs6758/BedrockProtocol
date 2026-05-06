@@ -18,6 +18,7 @@ use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
 use pmmp\encoding\VarInt;
+use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\ActorEvent;
 
@@ -29,14 +30,17 @@ class ActorEventPacket extends DataPacket implements ClientboundPacket, Serverbo
 	public int $eventId;
 	public int $eventData = 0;
 
+	public ?Vector3 $fireAtPosition = null;
+
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $actorRuntimeId, int $eventId, int $eventData) : self{
+	public static function create(int $actorRuntimeId, int $eventId, int $eventData,?Vector3 $fireAtPosition = null) : self{
 		$result = new self;
 		$result->actorRuntimeId = $actorRuntimeId;
 		$result->eventId = $eventId;
 		$result->eventData = $eventData;
+		$result->fireAtPosition = $fireAtPosition;
 		return $result;
 	}
 
@@ -44,12 +48,14 @@ class ActorEventPacket extends DataPacket implements ClientboundPacket, Serverbo
 		$this->actorRuntimeId = CommonTypes::getActorRuntimeId($in);
 		$this->eventId = Byte::readUnsigned($in);
 		$this->eventData = VarInt::readSignedInt($in);
+		$this->fireAtPosition = CommonTypes::readOptional($in, CommonTypes::getVector3(...));
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::putActorRuntimeId($out, $this->actorRuntimeId);
 		Byte::writeUnsigned($out, $this->eventId);
 		VarInt::writeSignedInt($out, $this->eventData);
+		CommonTypes::writeOptional($out, $this->fireAtPosition, CommonTypes::putVector3(...));
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

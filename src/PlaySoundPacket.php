@@ -29,11 +29,12 @@ class PlaySoundPacket extends DataPacket implements ClientboundPacket{
 	public float $z;
 	public float $volume;
 	public float $pitch;
+	public ?int $serverSoundHandle;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(string $soundName, float $x, float $y, float $z, float $volume, float $pitch) : self{
+	public static function create(string $soundName, float $x, float $y, float $z, float $volume, float $pitch,?int $serverSoundHandle = null) : self{
 		$result = new self;
 		$result->soundName = $soundName;
 		$result->x = $x;
@@ -52,6 +53,7 @@ class PlaySoundPacket extends DataPacket implements ClientboundPacket{
 		$this->z = $blockPosition->getZ() / 8;
 		$this->volume = LE::readFloat($in);
 		$this->pitch = LE::readFloat($in);
+		$this->serverSoundHandle = CommonTypes::readOptional($in, LE::readUnsignedLong(...));
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
@@ -59,6 +61,7 @@ class PlaySoundPacket extends DataPacket implements ClientboundPacket{
 		CommonTypes::putBlockPosition($out, new BlockPosition((int) ($this->x * 8), (int) ($this->y * 8), (int) ($this->z * 8)));
 		LE::writeFloat($out, $this->volume);
 		LE::writeFloat($out, $this->pitch);
+		CommonTypes::writeOptional($out, $this->serverSoundHandle, LE::writeUnsignedLong(...));
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{
