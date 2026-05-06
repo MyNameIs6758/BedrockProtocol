@@ -44,4 +44,6 @@ final class XboxAuthJwtBody extends JwtBodyRfc7519{
 	public string $pid = ""; // PlayStation Network user ID
 
 	public string $pname = ""; // PlayStation Network username
+
+	public string $ap = "";
 }
